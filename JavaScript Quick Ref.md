@@ -715,4 +715,221 @@ console.log(str1.localeCompare(str2)); // 0 if equivalent
 4. **`localeCompare`**:
     - The `localeCompare` method is used for comparing strings in a more localized context, considering language-specific rules. It returns `0` if the strings are equivalent, a negative number if the reference string is sorted before the compared string, and a positive number if it is sorted after.
 
+# Array Methods
+
+- Negative indexes are allowed.
+
+```javascript
+let arr = [1, 2, 3];
+arr.splice(-1, 0, 4, 5);
+console.log(arr); // [1, 2, 4, 5, 3]
+```
+
+## Symbol.isConcatSpreadable
+
+- If present in an array-like object, it is treated as an array by `concat`, and its elements are added.
+
+```javascript
+let arr = [1, 2];
+let arrayLike = {
+    0: 'x',
+    1: 'y',
+    length: 2,
+    [Symbol.isConcatSpreadable]: true
+};
+
+console.log(arr.concat(arrayLike)); // [1, 2, 'x', 'y']
+```
+
+## `includes` and `indexOf`
+
+- `includes` handles `NaN` correctly, whereas `indexOf` does not.
+
+```javascript
+let arr = [NaN];
+console.log(arr.includes(NaN)); // true
+console.log(arr.indexOf(NaN)); // -1
+```
+
+## `find`
+
+- Useful in arrays of objects. Looks for the first element that makes the function return `true`.
+
+```javascript
+let arr = [{ id: 1, name: 'Sajid' }, { id: 2, name: 'Raj' }];
+let user = arr.find(item => item.id === 1);
+console.log(user); // { id: 1, name: 'Sajid' }
+console.log(user.name); // 'Sajid'
+```
+
+### Additional Find Methods
+
+- `findIndex`: Returns the index of the first element that satisfies the condition.
+
+```javascript
+let index = arr.findIndex(item => item.id === 1);
+console.log(index); // 0
+```
+
+- `findLastIndex`: Returns the index of the last element that satisfies the condition.
+
+```javascript
+let lastIndex = arr.findLastIndex(item => item.id === 1);
+console.log(lastIndex); // 0
+```
+
+## `filter`
+
+- Returns an array of all elements that make the function return `true`.
+
+```javascript
+let users = [
+    { id: 1, name: 'Sajid' },
+    { id: 2, name: 'Raj' },
+    { id: 3, name: 'John' }
+];
+let filteredUsers = users.filter(user => user.id < 3);
+console.log(filteredUsers); // [{ id: 1, name: 'Sajid' }, { id: 2, name: 'Raj' }]
+```
+
+## Transform Array
+
+### `map`
+
+- Calls a function for each element and returns an array of results.
+
+```javascript
+let names = ['Krishan', 'Raj', 'Bram'];
+let nameLengths = names.map(item => item.length);
+console.log(nameLengths); // [7, 3, 4]
+```
+
+### `sort`
+
+- Sorts an array in place and also returns the sorted array. Items are sorted as strings by default.
+
+```javascript
+let arr = [1, 2, 15];
+arr.sort();
+console.log(arr); // [1, 15, 2]
+
+// Custom compare function
+arr.sort((a, b) => a - b);
+console.log(arr); // [1, 2, 15]
+```
+
+### `reverse`
+
+- Reverses the order of elements in an array.
+
+```javascript
+let arr = [1, 2, 3];
+arr.reverse();
+console.log(arr); // [3, 2, 1]
+```
+
+# `split` Method
+
+- The `split` method splits a string into an array of substrings, and returns the new array.
+
+```javascript
+let names = "Ram, Lakshman, Hanuman";
+let nameArray = names.split(", ");
+console.log(nameArray); // ["Ram", "Lakshman", "Hanuman"]
+```
+
+- You can limit the number of splits by providing a second parameter.
+
+```javascript
+let limitedNames = names.split(", ", 2);
+console.log(limitedNames); // ["Ram", "Lakshman"]
+```
+
+- `split` can also be used with other characters.
+
+```javascript
+let str = "string";
+let charArray = str.split("");
+console.log(charArray); // ["s", "t", "r", "i", "n", "g"]
+```
+
+# `join` Method
+
+- The `join` method joins all elements of an array into a string.
+
+```javascript
+let joinedNames = nameArray.join(", ");
+console.log(joinedNames); // "Ram, Lakshman, Hanuman"
+```
+
+### Explanation
+
+1. **`split` Method**:
+    - The `split` method is used to divide a string into an array of substrings based on a specified delimiter. The original string remains unchanged.
+    - The method takes two arguments: the delimiter (a string or regular expression) and an optional limit on the number of splits.
+    - Example: Splitting a comma-separated string into an array of names.
+
+2. **`join` Method**:
+    - The `join` method is used to join all elements of an array into a single string. The elements are separated by a specified delimiter.
+    - This method is particularly useful for creating a string from an array of substrings.
+    - Example: Joining an array of names into a single comma-separated string.
+
+# `reduce` and `reduceRight` Methods
+
+- Used to calculate a single value based on the array.
+
+```javascript
+let arr = [1, 2, 3, 4];
+
+let result = arr.reduce((accumulator, item) => accumulator + item, 0);
+console.log(result); // 10
+```
+
+- The function is applied to all array elements one after another and carries its result to the next call.
+
+### Parameters
+
+1. **accumulator**: Result of the previous function call, equals the initial value the first time if provided.
+2. **item**: Current array element.
+3. **index**: Position of the current element.
+4. **array**: The array being iterated.
+
+```javascript
+let value = arr.reduce((accumulator, item, index, array) => {
+    // Logic here
+}, initialValue);
+```
+
+## `thisArg` Parameter
+
+- An optional parameter accepted by all array methods (other than `sort`) that becomes `this` for the function.
+
+```javascript
+let army = {
+    minAge: 18,
+    maxAge: 27,
+    canJoin(user) {
+        return user.age >= this.minAge && user.age < this.maxAge;
+    }
+};
+
+let users = [
+    { age: 16 },
+    { age: 20 },
+    { age: 23 }
+];
+
+let soldiers = users.filter(army.canJoin, army);
+console.log(soldiers); // [{ age: 20 }, { age: 23 }]
+```
+
+### Explanation
+
+1. **`reduce` and `reduceRight`**:
+    - These methods iterate through an array and apply a function to each element to produce a single accumulated result. The `reduceRight` method operates similarly but from right to left.
+    - The callback function used with `reduce` receives four parameters: `accumulator`, `item`, `index`, and `array`. The `accumulator` is the result of the previous callback invocation, and the `item` is the current element being processed.
+
+2. **`thisArg` Parameter**:
+    - Array methods such as `filter`, `map`, `forEach`, etc., accept an optional `thisArg` parameter. This parameter is used as `this` within the callback function. If not provided, `this` is `undefined` in strict mode or the global object in non-strict mode.
+    - This is useful for passing the context (`this` value) into the callback function, ensuring it has access to the required properties and methods.
 
