@@ -933,3 +933,194 @@ console.log(soldiers); // [{ age: 20 }, { age: 23 }]
     - Array methods such as `filter`, `map`, `forEach`, etc., accept an optional `thisArg` parameter. This parameter is used as `this` within the callback function. If not provided, `this` is `undefined` in strict mode or the global object in non-strict mode.
     - This is useful for passing the context (`this` value) into the callback function, ensuring it has access to the required properties and methods.
 
+
+Based on your notes, here is a cleaned-up and formatted version of the JavaScript concepts you wrote down, with examples added where needed:
+
+## Iterables
+
+- **Generalization of arrays**: Allows for any object to be used in a `for...of` loop.
+- **Symbol.iterator**: An object must implement this method to be iterable.
+
+### Example
+```javascript
+let range = {
+    from: 1,
+    to: 5
+};
+
+range[Symbol.iterator] = function() {
+    return {
+        current: this.from,
+        last: this.to,
+        next() {
+            if (this.current <= this.last) {
+                return { done: false, value: this.current++ };
+            } else {
+                return { done: true };
+            }
+        }
+    };
+};
+
+for (let num of range) {
+    console.log(num); // 1, 2, 3, 4, 5
+}
+```
+
+## Map & Set
+
+### Map
+
+- **Keys can be of any type**: string, number, object, etc.
+- **NaN can be used as a key**: Uses SameValueZero algorithm, so `NaN` is equal to `NaN`.
+- **Chaining**: `map.set()` returns itself, allowing for chaining.
+  
+#### Methods
+- `map.keys()`: Returns an array of keys.
+- `map.values()`: Returns an array of values.
+- `map.entries()`: Returns an array of all key/value pairs (default iterator for `for...of`).
+
+### Example
+```javascript
+let map = new Map();
+map.set('1', 'val1').set('2', 'val2');
+
+for (let [key, value] of map) {
+    console.log(`${key}: ${value}`);
+}
+```
+
+### Set
+
+- **Set of values**: Only unique values, no duplicates.
+- **Repeated calls**: `set.add()` with the same value will not do anything.
+- **For...of can be used**: To iterate over the set.
+
+#### Methods
+- `set.keys()` and `set.values()`: Return the same values since there are no keys.
+- `set.entries()`: Returns an iterable of `[value, value]`.
+
+### Example
+```javascript
+let set = new Set([1, 2, 3, 3, 4]);
+set.add(5);
+
+for (let value of set) {
+    console.log(value); // 1, 2, 3, 4, 5
+}
+```
+
+## Object.fromEntries
+
+- **Purpose**: Create an object from an array of key-value pairs (entries).
+- Useful to convert a `Map` back to an `Object`.
+
+### Example
+```javascript
+let map = new Map([
+    ['key1', 'value1'],
+    ['key2', 'value2']
+]);
+
+let obj = Object.fromEntries(map.entries());
+console.log(obj); // { key1: 'value1', key2: 'value2' }
+```
+
+Here is a formatted explanation of the concepts from your notes, including WeakMap, WeakSet, destructuring assignment, and JSON handling:
+
+## WeakMap and WeakSet
+
+### WeakMap
+
+- **Doesn't prevent garbage collection**: Keys are objects and can be garbage collected if no other reference exists.
+- **All keys must be objects**, not primitives.
+
+### Example
+```javascript
+let john = { name: "John" };
+let weakMap = new WeakMap();
+weakMap.set(john, "...");
+
+john = null; // The object can be garbage collected.
+```
+
+### Use Cases
+- Caching or keeping track of metadata for objects without preventing their garbage collection.
+
+### WeakSet
+
+- **Analogous to Set**: Only stores objects.
+- **Objects exist in the set as long as there are references elsewhere**.
+- **Does not support `.size` or `.keys`** methods.
+
+### Example
+```javascript
+let obj1 = { name: "John" };
+let obj2 = { name: "Doe" };
+
+let weakSet = new WeakSet();
+weakSet.add(obj1);
+weakSet.add(obj2);
+
+obj1 = null; // obj1 is eligible for garbage collection.
+```
+
+### Use Cases
+- Tracking object presence while allowing them to be garbage collected.
+
+### Note
+- Both `WeakMap` and `WeakSet` are **not iterable**.
+
+## Destructuring Assignment
+
+- **Extract values** from arrays or properties from objects into distinct variables.
+
+### Example
+#### Object Destructuring
+```javascript
+let person = { name: "Ram", age: 27, faith: "Hindu" };
+let { age, name } = person;
+
+console.log(name); // "Ram"
+console.log(age);  // 27
+```
+
+#### Array Destructuring
+```javascript
+let arr = [1, 2, 3];
+let [a, , c] = arr; // Skipping the second element
+
+console.log(a); // 1
+console.log(c); // 3
+```
+
+## JSON Handling
+
+- **Data-only format**: Excludes functions, symbolic keys/values, and properties with `undefined` values.
+
+### Circular References
+- **Not allowed**: Cannot be stringified into JSON.
+
+### JSON.stringify()
+
+- Converts a JavaScript object into a JSON string.
+- Syntax: `JSON.stringify(value, replacer, space)`
+
+### Example
+```javascript
+let obj = {
+    name: "John",
+    age: 30,
+    greet: function() { console.log("Hello!"); },
+    [Symbol('id')]: 123
+};
+
+let jsonString = JSON.stringify(obj, null, 2);
+
+console.log(jsonString);
+// Output:
+// {
+//   "name": "John",
+//   "age": 30
+// }
+```
