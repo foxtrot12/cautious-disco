@@ -1101,26 +1101,74 @@ console.log(c); // 3
 ### Circular References
 - **Not allowed**: Cannot be stringified into JSON.
 
-### JSON.stringify()
+Here is a formatted version of the concepts from your notes regarding JavaScript functions, closures, and the `arguments` object:
 
-- Converts a JavaScript object into a JSON string.
-- Syntax: `JSON.stringify(value, replacer, space)`
+## The `arguments` Object
+
+- **Purpose**: Used in functions to access all arguments passed to the function.
+- **Array-like**: Not an actual array; methods like `.map()` will not work.
+- **Arrow Functions**: Do not have their own `arguments` object. They inherit `arguments` from the enclosing function.
 
 ### Example
 ```javascript
-let obj = {
-    name: "John",
-    age: 30,
-    greet: function() { console.log("Hello!"); },
-    [Symbol('id')]: 123
-};
+function exampleFunction() {
+    console.log(arguments.length); // Number of arguments passed
+    console.log(arguments[0]); // First argument
+}
 
-let jsonString = JSON.stringify(obj, null, 2);
+exampleFunction(1, 2, 3); // Output: 3, 1
+```
 
-console.log(jsonString);
-// Output:
-// {
-//   "name": "John",
-//   "age": 30
-// }
+## Variable Scope and Closures
+
+- **Closure**: A function that remembers its outer variables and can access them.
+- **All functions in JS are closures**, except when using the `new Function` syntax.
+
+### Example
+```javascript
+function makeCounter() {
+    let count = 0;
+    return function() {
+        return count++;
+    };
+}
+
+let counter = makeCounter();
+console.log(counter()); // 0
+console.log(counter()); // 1
+```
+
+## Function Objects and Named Function Expressions (NFE)
+
+- **Functions are objects**: They can have properties and methods.
+- **Callable action objects**: Can be called or treated as objects.
+- **NFE**: Named function expressions can have an internal name for recursion or identification in stack traces.
+
+### Example
+```javascript
+let arr = [function() {}];
+console.log(arr[0].name); // Empty string
+
+function sayHi() {
+    console.log("Hi");
+    sayHi.count++;
+}
+
+sayHi.count = 0;
+sayHi();
+console.log(sayHi.count); // 1
+```
+
+## Functions as Objects
+
+- **Functions can be assigned properties**: Custom properties can be added to functions, making them unique.
+
+### Example
+```javascript
+function greet() {
+    console.log("Hello!");
+}
+
+greet.customProperty = "I'm a custom property!";
+console.log(greet.customProperty); // "I'm a custom property!"
 ```
